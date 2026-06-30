@@ -3,343 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>115學年度課規表教務處管理端控制台 (Master終極對齊版)</title>
+    <title>115學年度課規表教務處管理端控制台 (全自動雲端即時同步版)</title>
     <style>
-        body {
-            font-family: "Microsoft JhengHei", Arial, sans-serif;
-            background-color: #f0f4f8;
-            margin: 0;
-            padding: 20px;
-            color: #333;
-        }
-        .container {
-            max-width: 1650px;
-            margin: 0 auto;
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-        }
-        h1 {
-            text-align: center;
-            color: #1a365d;
-            margin-bottom: 5px;
-            font-size: 28px;
-            letter-spacing: 1px;
-        }
-        .subtitle {
-            text-align: center;
-            color: #64748b;
-            margin-bottom: 25px;
-            font-size: 14px;
-        }
+        body { font-family: "Microsoft JhengHei", Arial, sans-serif; background-color: #f0f4f8; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 1650px; margin: 0 auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+        h1 { text-align: center; color: #1a365d; margin-bottom: 5px; font-size: 28px; letter-spacing: 1px; }
+        .subtitle { text-align: center; color: #64748b; margin-bottom: 25px; font-size: 14px; }
         
         /* 數據看盤 */
-        .dashboard {
-            display: flex;
-            justify-content: space-around;
-            background: #f8fafc;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 25px;
-            flex-wrap: wrap;
-            gap: 15px;
-            border-left: 6px solid #2563eb;
-            border-right: 1px solid #e2e8f0;
-            border-top: 1px solid #e2e8f0;
-            border-bottom: 1px solid #e2e8f0;
-        }
-        .stat-card {
-            text-align: center;
-            min-width: 180px;
-        }
-        .stat-card .label {
-            font-size: 13px;
-            color: #64748b;
-            margin-bottom: 6px;
-            font-weight: 600;
-        }
-        .stat-card .num {
-            font-size: 32px;
-            font-weight: bold;
-            color: #1e293b;
-        }
-        .progress-container {
-            width: 100%;
-            background-color: #e2e8f0;
-            border-radius: 20px;
-            margin-top: 10px;
-            border: 1px solid #cbd5e1;
-        }
-        .progress-bar {
-            width: 0%;
-            height: 22px;
-            background-color: #10b981;
-            text-align: center;
-            line-height: 22px;
-            color: white;
-            border-radius: 20px;
-            transition: width 0.3s;
-            font-size: 12px;
-            font-weight: bold;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
-        }
+        .dashboard { display: flex; justify-content: space-around; background: #f8fafc; padding: 20px; border-radius: 10px; margin-bottom: 25px; flex-wrap: wrap; gap: 15px; border-left: 6px solid #2563eb; border-right: 1px solid #e2e8f0; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; }
+        .stat-card { text-align: center; min-width: 180px; }
+        .stat-card .label { font-size: 13px; color: #64748b; margin-bottom: 6px; font-weight: 600; }
+        .stat-card .num { font-size: 32px; font-weight: bold; color: #1e293b; }
+        .progress-container { width: 100%; background-color: #e2e8f0; border-radius: 20px; margin-top: 10px; border: 1px solid #cbd5e1; }
+        .progress-bar { width: 0%; height: 22px; background-color: #10b981; text-align: center; line-height: 22px; color: white; border-radius: 20px; transition: width 0.3s; font-size: 12px; font-weight: bold; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
         
+        /* 身分切換列 */
+        .identity-bar { background: #1e293b; color: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; }
+        .identity-title { font-weight: bold; font-size: 16px; display: flex; align-items: center; gap: 10px; }
+        .identity-select { padding: 6px 12px; font-size: 14px; border-radius: 4px; outline: none; border: none; font-weight: bold; cursor: pointer; }
+
         /* 控制與篩選列 */
-        .toolbar {
-            background: #f1f5f9;
-            padding: 18px;
-            border-radius: 8px;
-            margin-bottom: 25px;
-            border: 1px solid #cbd5e1;
-        }
-        .tool-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 12px;
-            align-items: center;
-        }
-        .tool-label {
-            font-weight: bold;
-            font-size: 13.5px;
-            color: #334155;
-            min-width: 100px;
-        }
-        .filter-btn {
-            padding: 5px 12px;
-            border: 1px solid #cbd5e1;
-            background: white;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-size: 12.5px;
-            color: #475569;
-        }
-        .filter-btn:hover {
-            background: #e2e8f0;
-            border-color: #94a3b8;
-        }
-        .filter-btn.active {
-            background: #2563eb;
-            color: white;
-            border-color: #2563eb;
-            font-weight: bold;
-            box-shadow: 0 2px 4px rgba(37,99,235,0.2);
-        }
-        .filter-btn.staff-active {
-            background: #7c3aed;
-            color: white;
-            border-color: #7c3aed;
-            font-weight: bold;
-            box-shadow: 0 2px 4px rgba(124,58,237,0.2);
-        }
-        .search-input {
-            padding: 8px 14px;
-            width: 320px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            font-size: 13px;
-            outline: none;
-            transition: all 0.2s;
-            box-sizing: border-box;
-        }
-        .search-input:focus {
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
-        }
+        .toolbar { background: #f1f5f9; padding: 18px; border-radius: 8px; margin-bottom: 25px; border: 1px solid #cbd5e1; }
+        .tool-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; align-items: center; }
+        .tool-label { font-weight: bold; font-size: 13.5px; color: #334155; min-width: 100px; }
+        .filter-btn { padding: 5px 12px; border: 1px solid #cbd5e1; background: white; border-radius: 6px; cursor: pointer; transition: all 0.2s ease; font-size: 12.5px; color: #475569; }
+        .filter-btn:hover { background: #e2e8f0; border-color: #94a3b8; }
+        .filter-btn.active { background: #2563eb; color: white; border-color: #2563eb; font-weight: bold; box-shadow: 0 2px 4px rgba(37,99,235,0.2); }
+        .filter-btn.staff-active { background: #7c3aed; color: white; border-color: #7c3aed; font-weight: bold; box-shadow: 0 2px 4px rgba(124,58,237,0.2); }
+        .search-input { padding: 8px 14px; width: 320px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; outline: none; transition: all 0.2s; box-sizing: border-box; }
+        .search-input:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.15); }
         
         /* 表格與階段 */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            background: white;
-        }
-        th, td {
-            border: 1px solid #cbd5e1;
-            padding: 12px 10px;
-            text-align: left;
-            vertical-align: top;
-            font-size: 13.5px;
-        }
-        th {
-            background-color: #1e293b;
-            color: white;
-            position: sticky;
-            top: 0;
-            font-weight: bold;
-            padding: 12px 10px;
-            z-index: 10;
-        }
-        tr:nth-child(even) {
-            background-color: #f8fafc;
-        }
-        tr:hover {
-            background-color: #f1f5f9;
-        }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); background: white; }
+        th, td { border: 1px solid #cbd5e1; padding: 12px 10px; text-align: left; vertical-align: top; font-size: 13.5px; }
+        th { background-color: #334155; color: white; position: sticky; top: 0; font-weight: bold; padding: 12px 10px; z-index: 10; }
+        tr:nth-child(even) { background-color: #f8fafc; }
+        tr:hover { background-color: #f1f5f9; }
         
         /* 階段欄位與子檢核項目 */
-        .stage-box {
-            padding: 10px;
-            border-radius: 6px;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            margin-bottom: 5px;
-        }
-        .stage-title {
-            font-weight: bold;
-            font-size: 13px;
-            color: #1e293b;
-            margin-bottom: 8px;
-            border-bottom: 2px solid #e2e8f0;
-            padding-bottom: 5px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .check-item-row {
-            display: flex;
-            align-items: flex-start;
-            gap: 6px;
-            margin: 5px 0;
-            cursor: pointer;
-            font-size: 12px;
-            line-height: 1.4;
-            color: #334155;
-            padding: 5px;
-            border-radius: 4px;
-            transition: background 0.15s;
-        }
-        .check-item-row:hover {
-            background: #f1f5f9;
-        }
-        .check-item-row input {
-            width: 15px;
-            height: 15px;
-            margin-top: 2px;
-            cursor: pointer;
-        }
-        .check-item-row.checked-text span {
-            text-decoration: line-through;
-            color: #94a3b8;
-            font-style: italic;
-        }
+        .stage-box { padding: 10px; border-radius: 6px; background: #f8fafc; border: 1px solid #e2e8f0; margin-bottom: 5px; }
+        .stage-title { font-weight: bold; font-size: 13px; color: #1e293b; margin-bottom: 8px; border-bottom: 2px solid #e2e8f0; padding-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
+        .check-item-row { display: flex; align-items: flex-start; gap: 6px; margin: 5px 0; cursor: pointer; font-size: 12px; line-height: 1.4; color: #334155; padding: 5px; border-radius: 4px; transition: background 0.15s; }
+        .check-item-row:hover { background: #f1f5f9; }
+        .check-item-row input { width: 15px; height: 15px; margin-top: 2px; cursor: pointer; }
+        .check-item-row.checked-text span { text-decoration: line-through; color: #94a3b8; font-style: italic; }
         
+        /* 按鈕與提示標籤 */
+        .action-btn { padding: 4px 8px; font-size: 11.5px; font-weight: bold; color: white; border: none; border-radius: 4px; cursor: pointer; display: inline-block; margin-top: 5px; transition: background 0.2s; }
+        .btn-submit { background-color: #3b82f6; }
+        .btn-submit:hover { background-color: #2563eb; }
+        .auto-save-tag { font-size: 11px; color: #10b981; font-weight: bold; display: block; margin-top: 5px; }
+
         /* 狀態標籤 */
-        .status-badge {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 11.5px;
-            font-weight: bold;
-            display: inline-block;
-            text-align: center;
-            width: 120px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-        }
-        .status-0 {
-            background: #fef3c7;
-            color: #b45309;
-            border: 1px solid #fcd34d;
-        }
-        .status-1 {
-            background: #eff6ff;
-            color: #1d4ed8;
-            border: 1px solid #bfdbfe;
-        }
-        .status-2 {
-            background: #ecfdf5;
-            color: #047857;
-            border: 1px solid #a7f3d0;
-        }
+        .status-badge { padding: 6px 12px; border-radius: 20px; font-size: 11.5px; font-weight: bold; display: inline-block; text-align: center; width: 120px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .status-0 { background: #fef3c7; color: #b45309; border: 1px solid #fcd34d; }
+        .status-1 { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+        .status-2 { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
         
-        /* 儲存列 */
-        .save-box {
-            position: sticky;
-            bottom: 20px;
-            background: rgba(255,255,255,0.96);
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
-            border: 1px solid #e2e8f0;
-            margin-top: 30px;
-            z-index: 100;
-        }
-        .save-btn {
-            display: block;
-            width: 100%;
-            padding: 14px;
-            background: #10b981;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(16,185,129,0.2);
-            transition: all 0.2s;
-        }
-        .save-btn:hover {
-            background: #059669;
-            box-shadow: 0 6px 12px rgba(5,150,105,0.3);
-        }
+        .disabled-layer { opacity: 0.55; cursor: not-allowed !important; pointer-events: none; }
+        .tag-badge { background: #f1f5f9; color: #475569; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; display: inline-block; margin-bottom: 5px; border: 1px solid #e2e8f0; }
+        .staff-info { font-size: 12px; color: #64748b; margin-top: 4px; line-height: 1.4; }
+        .loading { text-align: center; padding: 30px; font-size: 18px; font-weight: bold; color: #2563eb; }
         
-        /* 其他 */
-        .disabled-layer {
-            opacity: 0.55;
-            cursor: not-allowed !important;
-            pointer-events: none;
-        }
-        .tag-badge {
-            background: #f1f5f9;
-            color: #475569;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: bold;
-            display: inline-block;
-            margin-bottom: 5px;
-            border: 1px solid #e2e8f0;
-        }
-        .staff-info {
-            font-size: 12px;
-            color: #64748b;
-            margin-top: 4px;
-            line-height: 1.4;
-        }
+        /* 浮動儲存提示 */
+        .sync-toast { position: fixed; top: 20px; right: 20px; background: #10b981; color: white; padding: 10px 20px; border-radius: 6px; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: none; z-index: 1000; }
     </style>
 </head>
 <body>
 
+<div id="toast-msg" class="sync-toast">🔄 雲端同步儲存中...</div>
+
 <div class="container">
-    <h1>115學年度 課程結構規劃表教務處管理端控制台</h1>
-    <div class="subtitle">【全校 265 筆真實 CSV 資料 100% 絕對精準對齊版】專為教務處課務組設計的 Master 進度簿，子檢核項目融合於階段一與階段二中，進度透過書籤永續保存。</div>
+    <h1>115學年度 課程結構規劃表全校即時連動控制台</h1>
+    <div class="subtitle">【全自動雲端同步版】勾選任何方格皆會自動儲存至雲端試算表；系所完備後點擊「送出並通知」，系統即在背景自動寄信。</div>
+
+    <div class="identity-bar">
+        <div class="identity-title">🔑 請選擇您目前的作業身分（控管可勾選格子）：</div>
+        <select id="identity-select" class="identity-select" onchange="changeIdentity()">
+            <option value="dept">【第一階段】系所承辦人 (僅能勾選階段一)</option>
+            <option value="staff">【第二階段】綜業處承辦同仁 (僅能勾選階段二)</option>
+            <option value="academic">【第三階段】教務處課務組 (可操作階段三、擁有最高權限)</option>
+        </select>
+    </div>
 
     <div class="dashboard">
         <div class="stat-card" style="min-width: 320px;">
             <div class="label" style="font-weight: bold; color: #1e3a8a;">📊 全校課規總簽收進度 (教務處簽收率)</div>
-            <div class="progress-container">
-                <div id="main-progress" class="progress-bar">0%</div>
-            </div>
+            <div class="progress-container"><div id="main-progress" class="progress-bar">0%</div></div>
         </div>
-        <div class="stat-card">
-            <div class="label">總待審學制數</div>
-            <div id="total-count" class="num">0</div>
-        </div>
-        <div class="stat-card">
-            <div class="label">⏳ 未提報 (系所檢核未完備)</div>
-            <div id="status0-count" class="num" style="color:#b45309;">0</div>
-        </div>
-        <div class="stat-card">
-            <div class="label">📩 審理中 (綜業處核對中)</div>
-            <div id="status1-count" class="num" style="color:#1d4ed8;">0</div>
-        </div>
-        <div class="stat-card">
-            <div class="label">✅ 已結案 (教務處已簽收)</div>
-            <div id="status2-count" class="num" style="color:#047857;">0</div>
-        </div>
+        <div class="stat-card"><div class="label">總待審學制數</div><div id="total-count" class="num">0</div></div>
+        <div class="stat-card"><div class="label">⏳ 未提報 (系所檢核未完備)</div><div id="status0-count" class="num" style="color:#b45309;">0</div></div>
+        <div class="stat-card"><div class="label">📩 審理中 (綜業處核對中)</div><div id="status1-count" class="num" style="color:#1d4ed8;">0</div></div>
+        <div class="stat-card"><div class="label">✅ 已結案 (教務處已簽收)</div><div id="status2-count" class="num" style="color:#047857;">0</div></div>
     </div>
 
     <div class="toolbar">
@@ -394,7 +150,8 @@
         </div>
     </div>
 
-    <table id="main-table">
+    <div id="loading-text" class="loading">⏳ 正在與雲端資料庫連線、抓取最新審查進度中，請稍候...</div>
+    <table id="main-table" style="display: none;">
         <thead>
             <tr>
                 <th style="width: 10%;">所屬學院</th>
@@ -407,318 +164,40 @@
         </thead>
         <tbody id="table-body"></tbody>
     </table>
-
-    <div class="save-box">
-        <button class="save-btn" onclick="generateSharedLink()">💾 儲存目前全校最新進度並產生 Master 進度網址（完成後請覆蓋您的瀏覽器書籤）</button>
-    </div>
 </div>
 
 <script>
-    const initialData = [
-        {"id": 1, "college": "創新創業發展處", "dept": "IE00 創新創業發展處", "program": "日間部四技", "type": "系專業課規", "staff": "吳君苓", "email": "sunny614@nkust.edu.tw"},
-        {"id": 2, "college": "創新設計學院", "dept": "UA00 創新設計學院", "program": "日間部四技", "type": "學院共同課規", "staff": "吳君苓", "email": "sunny614@nkust.edu.tw"},
-        {"id": 3, "college": "創新設計學院", "dept": "UA01 跨域互動設計學士", "program": "日間部四技", "type": "系專業課規", "staff": "楊富閔", "email": "minshall@nkust.edu.tw"},
-        {"id": 4, "college": "電機與資訊學院", "dept": "UB00 電資學院", "program": "日間部四技", "type": "學院共同課規", "staff": "吳君苓", "email": "sunny614@nkust.edu.tw"},
-        {"id": 5, "college": "電機與資訊學院", "dept": "UB00 電資學院", "program": "日間部碩士", "type": "學院共同課規", "staff": "吳君苓", "email": "sunny614@nkust.edu.tw"},
-        {"id": 6, "college": "電機與資訊學院", "dept": "UB01 光電工程研究所", "program": "日間部碩士", "type": "系專業課規", "staff": "潘淑花", "email": "cher@nkust.edu.tw"},
-        {"id": 7, "college": "電機與資訊學院", "dept": "UB02 電機智慧自動碩士", "program": "日間部碩士", "type": "系專業課規", "staff": "徐曉萱", "email": "hsu000@nkust.edu.tw"},
-        {"id": 8, "college": "電機與資訊學院", "dept": "UB02 電機智慧自動碩士", "program": "碩士在職專班", "type": "系專業課規", "staff": "徐曉萱", "email": "hsu000@nkust.edu.tw"},
-        {"id": 9, "college": "電機與資訊學院", "dept": "UB03 半導體工程系", "program": "日間部碩士", "type": "系專業課規", "staff": "王安娜", "email": "anwang@nkust.edu.tw"},
-        {"id": 10, "college": "電機與資訊學院", "dept": "UB03 半導體工程系", "program": "進修部四技", "type": "系專業課規", "staff": "李宜臻", "email": "s996324@nkust.edu.tw"},
-        {"id": 11, "college": "電機與資訊學院", "dept": "UB03 半導體工程系", "program": "碩士在職專班", "type": "系專業課規", "staff": "李宜臻", "email": "s996324@nkust.edu.tw"},
-        {"id": 12, "college": "電機與資訊學院", "dept": "UB03 半導體工程系", "program": "日間部四技", "type": "系專業課規", "staff": "王安娜", "email": "anwang@nkust.edu.tw"},
-        {"id": 13, "college": "電機與資訊學院", "dept": "UB05 智慧系統技優專班", "program": "日間部四技", "type": "系專業課規", "staff": "林慈芳", "email": "tina@nkust.edu.tw"},
-        {"id": 14, "college": "電機與資訊學院", "dept": "UB09 半導體製程技優專班", "program": "日間部四技", "type": "系專業課規", "staff": "王安娜", "email": "anwang@nkust.edu.tw"},
-        {"id": 15, "college": "管理學院", "dept": "UC11 國企系", "program": "日間部四技", "type": "系專業課規", "staff": "鄭茹穗", "email": "snoopy5360@nkust.edu.tw"},
-        {"id": 16, "college": "管理學院", "dept": "UC11 國企系", "program": "進修部四技", "type": "系專業課規", "staff": "曾雪桃", "email": "sheue@nkust.edu.tw"},
-        {"id": 17, "college": "管理學院", "dept": "UC11 國企系", "program": "進修部二技", "type": "系專業課規", "staff": "鍾新珠", "email": "july@nkust.edu.tw"},
-        {"id": 18, "college": "管理學院", "dept": "UC11 國企系", "program": "日間部博士", "type": "系專業課規", "staff": "鄭茹穗", "email": "snoopy5360@nkust.edu.tw"},
-        {"id": 19, "college": "商業智慧學院", "dept": "UC45 金融資訊系", "program": "日間部四技", "type": "系專業課規", "staff": "鄭茹穗", "email": "snoopy5360@nkust.edu.tw"},
-        {"id": 20, "college": "商業智慧學院", "dept": "UC45 金融資訊系", "program": "日間部碩士", "type": "系專業課規", "staff": "鄭茹穗", "email": "snoopy5360@nkust.edu.tw"},
-        {"id": 21, "college": "商業智慧學院", "dept": "UC45 金融資訊系", "program": "碩士在職專班", "type": "系專業課規", "staff": "張芳瑜", "email": "kate611@nkust.edu.tw"},
-        {"id": 22, "college": "商業智慧學院", "dept": "UC45 金融資訊系", "program": "進修部四技", "type": "系專業課規", "staff": "張芳瑜", "email": "kate611@nkust.edu.tw"},
-        {"id": 23, "college": "電機與資訊學院", "dept": "UD02 電子系[第一]", "program": "日間部四技", "type": "系專業課規", "staff": "林慈芳", "email": "tina@nkust.edu.tw"},
-        {"id": 24, "college": "電機與資訊學院", "dept": "UD03 電通系", "program": "日間部四技", "type": "系專業課規", "staff": "林慈芳", "email": "tina@nkust.edu.tw"},
-        {"id": 25, "college": "電機與資訊學院", "dept": "UD07 電子系碩士班[第", "program": "日間部碩士", "type": "系專業課規", "staff": "林慈芳", "email": "tina@nkust.edu.tw"},
-        {"id": 26, "college": "電機與資訊學院", "dept": "UD11 電子系碩專班[第", "program": "碩士在職專班", "type": "系專業課規", "staff": "林慈芳", "email": "tina@nkust.edu.tw"},
-        {"id": 27, "college": "電機與資訊學院", "dept": "UD13 電通系碩士班[第", "program": "日間部碩士", "type": "系專業課規", "staff": "林慈芳", "email": "tina@nkust.edu.tw"},
-        {"id": 28, "college": "電機與資訊學院", "dept": "UD14 電通系碩專班[第", "program": "碩士在職專班", "type": "系專業課規", "staff": "林慈芳", "email": "tina@nkust.edu.tw"},
-        {"id": 29, "college": "工學院", "dept": "UE10 土木碩士班", "program": "日間部碩士", "type": "系專業課規", "staff": "張鏵方", "email": "momo97@nkust.edu.tw"},
-        {"id": 30, "college": "電機與資訊學院", "dept": "UE15 資工系", "program": "日間部博士", "type": "系專業課規", "staff": "潘淑花", "email": "cher@nkust.edu.tw"},
-        {"id": 31, "college": "電機與資訊學院", "dept": "UE15 資工系", "program": "日間部四技", "type": "系專業課規", "staff": "潘淑花", "email": "cher@nkust.edu.tw"},
-        {"id": 32, "college": "電機與資訊學院", "dept": "UE15 資工系", "program": "日間部碩士", "type": "系專業課規", "staff": "潘淑花", "email": "cher@nkust.edu.tw"},
-        {"id": 33, "college": "電機與資訊學院", "dept": "UE15 資工系", "program": "碩士在職專班", "type": "系專業課規", "staff": "潘淑花", "email": "cher@nkust.edu.tw"},
-        {"id": 34, "college": "工學院", "dept": "UE16 化材系", "program": "日間部四技", "type": "系專業課規", "staff": "蔡依芳", "email": "yvonnetsai@nkust.edu.tw"},
-        {"id": 35, "college": "工學院", "dept": "UE16 化材系", "program": "日間部博士", "type": "系專業課規", "staff": "蔡依芳", "email": "yvonnetsai@nkust.edu.tw"},
-        {"id": 36, "college": "工學院", "dept": "UE17 化材系碩士[建工]", "program": "日間部碩士", "type": "系專業課規", "staff": "蔡依芳", "email": "yvonnetsai@nkust.edu.tw"},
-        {"id": 37, "college": "工學院", "dept": "UE17 化材系碩士[建工]", "program": "碩士在職專班", "type": "系專業課規", "staff": "蔡依芳", "email": "yvonnetsai@nkust.edu.tw"},
-        {"id": 38, "college": "電機與資訊學院", "dept": "UE18 電機系碩士班", "program": "日間部碩士", "type": "系專業課規", "staff": "張芳瑜", "email": "kate611@nkust.edu.tw"},
-        {"id": 39, "college": "電機與資訊學院", "dept": "UE18 電機系碩士班", "program": "碩士在職專班", "type": "系專業課規", "staff": "張芳瑜", "email": "kate611@nkust.edu.tw"},
-        {"id": 40, "college": "電機與資訊學院", "dept": "UE19 電機系博士班", "program": "日間部博士", "type": "系專業課規", "staff": "張芳瑜", "email": "kate611@nkust.edu.tw"},
-        {"id": 41, "college": "電機與資訊學院", "dept": "UE20 電子系碩士班", "program": "日間部碩士", "type": "系專業課規", "staff": "曾雪桃", "email": "sheue@nkust.edu.tw"},
-        {"id": 42, "college": "電機與資訊學院", "dept": "UE20 電子系碩士班", "program": "碩士在職專班", "type": "系專業課規", "staff": "曾雪桃", "email": "sheue@nkust.edu.tw"},
-        {"id": 43, "college": "工學院", "dept": "UE23 土木系", "program": "進修部二技", "type": "系專業課規", "staff": "鍾新珠", "email": "july@nkust.edu.tw"},
-        {"id": 44, "college": "工學院", "dept": "UE23 土木系", "program": "日間部四技", "type": "系專業課規", "staff": "張鏵方", "email": "momo97@nkust.edu.tw"},
-        {"id": 45, "college": "智慧機電學院", "dept": "UE25 機械系-一般組", "program": "日間部四技", "type": "系專業課規", "staff": "張芳瑜", "email": "kate611@nkust.edu.tw"},
-        {"id": 46, "college": "智慧機電學院", "dept": "UE25 機械系-智能系統與控制組", "program": "日間部四技", "type": "系專業課規", "staff": "張芳瑜", "email": "kate611@nkust.edu.tw"},
-        {"id": 47, "college": "智慧機電學院", "dept": "UE25 機械系-微奈米技術組", "program": "日間部四技", "type": "系專業課規", "staff": "張芳瑜", "email": "kate611@nkust.edu.tw"},
-        {"id": 48, "college": "智慧機電學院", "dept": "UE25 機械系", "program": "日間部碩士", "type": "系專業課規", "staff": "張芳瑜", "email": "kate611@nkust.edu.tw"},
-        {"id": 49, "college": "智慧機電學院", "dept": "UE25 機械系", "program": "日間部博士", "type": "系專業課規", "staff": "張芳瑜", "email": "kate611@nkust.edu.tw"},
-        {"id": 50, "college": "智慧機電學院", "dept": "UE25 機械系", "program": "進修部二技", "type": "系專業課規", "staff": "鍾新珠", "email": "july@nkust.edu.tw"},
-        {"id": 51, "college": "智慧機電學院", "dept": "UE25 機械系", "program": "碩士在職專班", "type": "系專業課規", "staff": "張鏵方", "email": "momo97@nkust.edu.tw"},
-        {"id": 52, "college": "智慧機電學院", "dept": "UE25 機械系", "program": "進修部四技", "type": "系專業課規", "staff": "張鏵方", "email": "momo97@nkust.edu.tw"},
-        {"id": 53, "college": "電機與資訊學院", "dept": "UE27 電機系", "program": "進修部四技", "type": "系專業課規", "staff": "張芳瑜", "email": "kate611@nkust.edu.tw"},
-        {"id": 54, "college": "電機與資訊學院", "dept": "UE27 電機系", "program": "進修部二技", "type": "系專業課規", "staff": "鍾新珠", "email": "july@nkust.edu.tw"},
-        {"id": 55, "college": "電機與資訊學院", "dept": "UE27 電機系", "program": "日間部四技", "type": "系專業課規", "staff": "張芳瑜", "email": "kate611@nkust.edu.tw"},
-        {"id": 56, "college": "電機與資訊學院", "dept": "UE29 電子系[建工]-電子組", "program": "日間部四技", "type": "系專業課規", "staff": "曾雪桃", "email": "sheue@nkust.edu.tw"},
-        {"id": 57, "college": "電機與資訊學院", "dept": "UE29 電子系[建工]-電信與系統組", "program": "日間部四技", "type": "系專業課規", "staff": "曾雪桃", "email": "sheue@nkust.edu.tw"},
-        {"id": 58, "college": "電機與資訊學院", "dept": "UE29 電子系[建工]-資訊與數位IC設計組", "program": "日間部四技", "type": "系專業課規", "staff": "曾雪桃", "email": "sheue@nkust.edu.tw"},
-        {"id": 59, "college": "電機與資訊學院", "dept": "UE29 電子系[建工]", "program": "日間部博士", "type": "系專業課規", "staff": "曾雪桃", "email": "sheue@nkust.edu.tw"},
-        {"id": 60, "college": "電機與資訊學院", "dept": "UE29 電子系[建工]", "program": "進修部四技", "type": "系專業課規", "staff": "曾雪桃", "email": "sheue@nkust.edu.tw"},
-        {"id": 61, "college": "電機與資訊學院", "dept": "UE29 電子系[建工]", "program": "碩士在職專班", "type": "系專業課規", "staff": "曾雪桃", "email": "sheue@nkust.edu.tw"},
-        {"id": 62, "college": "智慧機電學院", "dept": "UE31 模具系-一般組", "program": "日間部四技", "type": "系專業課規", "staff": "黃蕙蘭", "email": "hueylan@nkust.edu.tw"},
-        {"id": 63, "college": "智慧機電學院", "dept": "UE31 模具系-光電模具組", "program": "日間部四技", "type": "系專業課規", "staff": "黃蕙蘭", "email": "hueylan@nkust.edu.tw"},
-        {"id": 64, "college": "智慧機電學院", "dept": "UE31 模具系-精微模具組", "program": "日間部四技", "type": "系專業課規", "staff": "黃蕙蘭", "email": "hueylan@nkust.edu.tw"},
-        {"id": 65, "college": "智慧機電學院", "dept": "UE31 模具系", "program": "日間部博士", "type": "系專業課規", "staff": "黃蕙蘭", "email": "hueylan@nkust.edu.tw"},
-        {"id": 66, "college": "智慧機電學院", "dept": "UE31 模具系", "program": "進修部四技", "type": "系專業課規", "staff": "黃蕙蘭", "email": "hueylan@nkust.edu.tw"},
-        {"id": 67, "college": "智慧機電學院", "dept": "UE31 模具系", "program": "日間部二技", "type": "系專業課規", "staff": "黃蕙蘭", "email": "hueylan@nkust.edu.tw"},
-        {"id": 68, "college": "智慧機電學院", "dept": "UE32 模具科[建工|燕巢", "program": "日間部五專", "type": "系專業課規", "staff": "黃蕙蘭", "email": "hueylan@nkust.edu.tw"},
-        {"id": 69, "college": "智慧機電學院", "dept": "UE33 模具系碩士[建工]", "program": "日間部碩士", "type": "系專業課規", "staff": "黃蕙蘭", "email": "hueylan@nkust.edu.tw"},
-        {"id": 70, "college": "工學院", "dept": "UE68 土木系工程科技", "program": "日間部博士", "type": "系專業課規", "staff": "張鏵方", "email": "momo97@nkust.edu.tw"},
-        {"id": 71, "college": "工學院", "dept": "UE69 土木系工程與防災", "program": "碩士在職專班", "type": "系專業課規", "staff": "張鏵方", "email": "momo97@nkust.edu.tw"},
-        {"id": 72, "college": "工學院", "dept": "UE71 工管系碩士[建工]", "program": "日間部碩士", "type": "系專業課規", "staff": "張鏵方", "email": "momo97@nkust.edu.tw"},
-        {"id": 73, "college": "工學院", "dept": "UE71 工管系碩士[建工]", "program": "碩士在職專班", "type": "系專業課規", "staff": "張鏵方", "email": "momo97@nkust.edu.tw"},
-        {"id": 74, "college": "工學院", "dept": "UE72 工管系", "program": "日間部四技", "type": "系專業課規", "staff": "張鏵方", "email": "momo97@nkust.edu.tw"},
-        {"id": 75, "college": "工學院", "dept": "UE72 工管系", "program": "進修部四技", "type": "系專業課規", "staff": "張鏵方", "email": "momo97@nkust.edu.tw"},
-        {"id": 76, "college": "工學院", "dept": "UE72 工管系", "program": "日間部博士", "type": "系專業課規", "staff": "張鏵方", "email": "momo97@nkust.edu.tw"},
-        {"id": 77, "college": "智慧機電學院", "dept": "UE78 模具系應用工程[", "program": "碩士在職專班", "type": "系專業課規", "staff": "黃蕙蘭", "email": "hueylan@nkust.edu.tw"},
-        {"id": 78, "college": "電機與資訊學院", "dept": "UE84 電資科技外國碩士", "program": "日間部碩士", "type": "系專業課規", "staff": "曾雪桃", "email": "sheue@nkust.edu.tw"},
-        {"id": 79, "college": "智慧機電學院", "dept": "UE86 能源與冷凍工程系", "program": "日間部四技", "type": "系專業課規", "staff": "鄭茹穗", "email": "snoopy5360@nkust.edu.tw"},
-        {"id": 80, "college": "工學院", "dept": "UF01 營建系", "program": "日間部碩士", "type": "系專業課規", "staff": "徐曉萱", "email": "hsu000@nkust.edu.tw"},
-        {"id": 81, "college": "工學院", "dept": "UF01 營建系", "program": "日間部四技", "type": "系專業課規", "staff": "徐曉萱", "email": "hsu000@nkust.edu.tw"},
-        {"id": 82, "college": "工學院", "dept": "UF02 環安系", "program": "日間部四技", "type": "系專業課規", "staff": "溫思怡", "email": "szuyiwen@nkust.edu.tw"},
-        {"id": 83, "college": "工學院", "dept": "UF02 環安系", "program": "日間部博士", "type": "系專業課規", "staff": "溫思怡", "email": "szuyiwen@nkust.edu.tw"},
-        {"id": 84, "college": "創新設計學院", "dept": "UF08 工業設計系", "program": "日間部碩士", "type": "系專業課規", "staff": "林慈芳", "email": "tina@nkust.edu.tw"},
-        {"id": 85, "college": "創新設計學院", "dept": "UF08 工業設計系", "program": "日間部四技", "type": "系專業課規", "staff": "林慈芳", "email": "tina@nkust.edu.tw"},
-        {"id": 86, "college": "智慧機電學院", "dept": "UF09 機電系", "program": "日間部博士", "type": "系專業課規", "staff": "周仕杰", "email": "red10506@nkust.edu.tw"},
-        {"id": 87, "college": "智慧機電學院", "dept": "UF09 機電系", "program": "碩士在職專班", "type": "系專業課規", "staff": "周仕杰", "email": "red10506@nkust.edu.tw"},
-        {"id": 88, "college": "智慧機電學院", "dept": "UF09 機電系", "program": "日間部碩士", "type": "系專業課規", "staff": "周仕杰", "email": "red10506@nkust.edu.tw"},
-        {"id": 89, "college": "智慧機電學院", "dept": "UF09 機電系", "program": "日間部博士", "type": "系專業課規", "staff": "周仕杰", "email": "red10506@nkust.edu.tw"},
-        {"id": 90, "college": "智慧機電學院", "dept": "UF10 機電系精機組", "program": "日間部四技", "type": "系專業課規", "staff": "周仕杰", "email": "red10506@nkust.edu.tw"},
-        {"id": 91, "college": "智慧機電學院", "dept": "UF11 機電系自動組", "program": "日間部四技", "type": "系專業課規", "staff": "周仕杰", "email": "red10506@nkust.edu.tw"},
-        {"id": 92, "college": "工學院", "dept": "UF19 環安系碩士班[第", "program": "日間部碩士", "type": "系專業課規", "staff": "溫思怡", "email": "szuyiwen@nkust.edu.tw"},
-        {"id": 93, "college": "工學院", "dept": "UF20 環安系碩專班[第", "program": "碩士在職專班", "type": "系專業課規", "staff": "溫思怡", "email": "szuyiwen@nkust.edu.tw"},
-        {"id": 94, "college": "智慧機電學院", "dept": "UF38 車輛工程系", "program": "日間部四技", "type": "系專業課規", "staff": "鄭茹穗", "email": "snoopy5360@nkust.edu.tw"},
-        {"id": 95, "college": "管理學院", "dept": "UH53 人資系", "program": "日間部四技", "type": "系專業課規", "staff": "楊富閔", "email": "minshall@nkust.edu.tw"},
-        {"id": 96, "college": "管理學院", "dept": "UH54 人資系碩士班", "program": "碩士在職專班", "type": "系專業課規", "staff": "蔡依芳", "email": "yvonnetsai@nkust.edu.tw"},
-        {"id": 97, "college": "管理學院", "dept": "UH54 人資系碩士班", "program": "日間部碩士", "type": "系專業課規", "staff": "楊富閔", "email": "minshall@nkust.edu.tw"},
-        {"id": 98, "college": "創新設計學院", "dept": "UH58 文創系", "program": "日間部四技", "type": "系專業課規", "staff": "楊富閔", "email": "minshall@nkust.edu.tw"},
-        {"id": 99, "college": "創新設計學院", "dept": "UH58 文創系", "program": "日間部碩士", "type": "系專業課規", "staff": "楊富閔", "email": "minshall@nkust.edu.tw"},
-        {"id": 100, "college": "創新設計學院", "dept": "UH58 文創系", "program": "碩士在職專班", "type": "系專業課規", "staff": "蔡依芳", "email": "yvonnetsai@nkust.edu.tw"},
-        {"id": 101, "college": "外語學院", "dept": "UJ00 外語學院", "program": "日間部四技", "type": "學院共同課規", "staff": "吳君苓", "email": "sunny614@nkust.edu.tw"},
-        {"id": 102, "college": "外語學院", "dept": "UJ00 外語學院", "program": "日間部二技", "type": "學院共同課規", "staff": "吳君苓", "email": "sunny614@nkust.edu.tw"},
-        {"id": 103, "college": "外語學院", "dept": "UJ01 應英系", "program": "日間部二技", "type": "系專業課規", "staff": "劉育文", "email": "wenwen@nkust.edu.tw"},
-        {"id": 104, "college": "外語學院", "dept": "UJ01 應英系", "program": "日間部四技", "type": "系專業課規", "staff": "劉育文", "email": "wenwen@nkust.edu.tw"},
-        {"id": 105, "college": "外語學院", "dept": "UJ02 應日系", "program": "日間部四技", "type": "系專業課規", "staff": "劉育文", "email": "wenwen@nkust.edu.tw"},
-        {"id": 106, "college": "外語學院", "dept": "UJ02 應日系", "program": "日間部二技", "type": "系專業課規", "staff": "劉育文", "email": "wenwen@nkust.edu.tw"},
-        {"id": 107, "college": "外語學院", "dept": "UJ03 應德系", "program": "日間部四技", "type": "系專業課規", "staff": "劉育文", "email": "wenwen@nkust.edu.tw"},
-        {"id": 108, "college": "外語學院", "dept": "UJ06 應日系碩專班[第", "program": "碩士在職專班", "type": "系專業課規", "staff": "劉育文", "email": "wenwen@nkust.edu.tw"},
-        {"id": 109, "college": "外語學院", "dept": "UJ07 應日系碩士班[第", "program": "日間部碩士", "type": "系專業課規", "staff": "劉育文", "email": "wenwen@nkust.edu.tw"},
-        {"id": 110, "college": "外語學院", "dept": "UJ08 口筆譯碩士班[第", "program": "日間部碩士", "type": "系專業課規", "staff": "劉育文", "email": "wenwen@nkust.edu.tw"},
-        {"id": 111, "college": "外語學院", "dept": "UJ09 應英教學與應用碩", "program": "日間部碩士", "type": "系專業課規", "staff": "劉育文", "email": "wenwen@nkust.edu.tw"},
-        {"id": 112, "college": "外語學院", "dept": "UJ10 應德系碩士班[第", "program": "日間部碩士", "type": "系專業課規", "staff": "劉育文", "email": "wenwen@nkust.edu.tw"},
-        {"id": 113, "college": "工學院", "dept": "UJ11 營建系碩士班[第", "program": "日間部碩士", "type": "系專業課規", "staff": "徐曉萱", "email": "hsu000@nkust.edu.tw"},
-        {"id": 114, "college": "外語學院", "dept": "UJ16 外院學程[第一]", "program": "日間部四技", "type": "學院共同課規", "staff": "吳君苓", "email": "sunny614@nkust.edu.tw"},
-        {"id": 115, "college": "外語學院", "dept": "UJ16 外院學程[第一]", "program": "日間部二技", "type": "學院共同課規", "staff": "吳君苓", "email": "sunny614@nkust.edu.tw"},
-        {"id": 116, "college": "工學院", "dept": "UJ17 營建系碩專班", "program": "碩士在職專班", "type": "系專業課規", "staff": "徐曉萱", "email": "hsu000@nkust.edu.tw"},
-        {"id": 117, "college": "商業智慧學院", "dept": "UM44 觀光餐旅碩士", "program": "碩士在職專班", "type": "系專業課規", "staff": "蔡依芳", "email": "yvonnetsai@nkust.edu.tw"},
-        {"id": 118, "college": "商業智慧學院", "dept": "UM44 觀光餐旅碩士", "program": "日間部碩士", "type": "系專業課規", "staff": "鄭茹穗", "email": "snoopy5360@nkust.edu.tw"},
-        {"id": 119, "college": "管理學院", "dept": "UM74 企管系", "program": "日間部四技", "type": "系專業課規", "staff": "楊富閔", "email": "minshall@nkust.edu.tw"},
-        {"id": 120, "college": "管理學院", "dept": "UM74 企管系", "program": "進修部四技", "type": "系專業課規", "staff": "曾雪桃", "email": "sheue@nkust.edu.tw"},
-        {"id": 121, "college": "管理學院", "dept": "UM74 企管系", "program": "日間部碩士", "type": "系專業課規", "staff": "楊富閔", "email": "minshall@nkust.edu.tw"},
-        {"id": 122, "college": "管理學院", "dept": "UM74 企管系", "program": "碩士在職專班", "type": "系專業課規", "staff": "曾雪桃", "email": "sheue@nkust.edu.tw"},
-        {"id": 123, "college": "商業智慧學院", "dept": "UM76 觀光系", "program": "進修部四技", "type": "系專業課規", "staff": "蔡依芳", "email": "yvonnetsai@nkust.edu.tw"},
-        {"id": 124, "college": "商業智慧學院", "dept": "UM76 觀光系", "program": "進修部二技", "type": "系專業課規", "staff": "鍾新珠", "email": "july@nkust.edu.tw"},
-        {"id": 125, "college": "商業智慧學院", "dept": "UM76 觀光系", "program": "日間部四技", "type": "系專業課規", "staff": "鄭茹穗", "email": "snoopy5360@nkust.edu.tw"},
-        {"id": 126, "college": "管理學院", "dept": "UM83 國企系碩士[燕巢]", "program": "日間部碩士", "type": "系專業課規", "staff": "鄭茹穗", "email": "snoopy5360@nkust.edu.tw"},
-        {"id": 127, "college": "管理學院", "dept": "UM83 國企系碩士[燕巢]", "program": "碩士在職專班", "type": "系專業課規", "staff": "曾雪桃", "email": "sheue@nkust.edu.tw"},
-        {"id": 128, "college": "管理學院", "dept": "UM88 企管系高階碩專", "program": "碩士在職專班", "type": "系專業課規", "staff": "曾雪桃", "email": "sheue@nkust.edu.tw"},
-        {"id": 129, "college": "管理學院", "dept": "UN01 資管系", "program": "日間部博士", "type": "系專業課規", "staff": "周仕杰", "email": "red10506@nkust.edu.tw"},
-        {"id": 130, "college": "管理學院", "dept": "UN01 資管系", "program": "日間部四技", "type": "系專業課規", "staff": "周仕杰", "email": "red10506@nkust.edu.tw"},
-        {"id": 131, "college": "管理學院", "dept": "UN02 運籌系", "program": "日間部四技", "type": "系專業課規", "staff": "周仕杰", "email": "red10506@nkust.edu.tw"},
-        {"id": 132, "college": "管理學院", "dept": "UN03 科法所", "program": "日間部碩士", "type": "系專業課規", "staff": "徐曉萱", "email": "hsu000@nkust.edu.tw"},
-        {"id": 133, "college": "管理學院", "dept": "UN04 行銷系", "program": "日間部四技", "type": "系專業課規", "staff": "徐曉萱", "email": "hsu000@nkust.edu.tw"},
-        {"id": 134, "college": "管理學院", "dept": "UN07 高階主管所", "program": "碩士在職專班", "type": "系專業課規", "staff": "徐曉萱", "email": "hsu000@nkust.edu.tw"},
-        {"id": 135, "college": "管理學院", "dept": "UN07 高階主管所", "program": "境外碩士在職秋季專班", "type": "系專業課規", "staff": "徐曉萱", "email": "hsu000@nkust.edu.tw"},
-        {"id": 136, "college": "管理學院", "dept": "UN08 行銷系碩士班[第", "program": "日間部碩士", "type": "系專業課規", "staff": "徐曉萱", "email": "hsu000@nkust.edu.tw"},
-        {"id": 137, "college": "管理學院", "dept": "UN09 行銷系碩專班[第", "program": "碩士在職專班", "type": "系專業課規", "staff": "徐曉萱", "email": "hsu000@nkust.edu.tw"},
-        {"id": 138, "college": "管理學院", "dept": "UN11 資管系電商碩士班", "program": "日間部碩士", "type": "系專業課規", "staff": "周仕杰", "email": "red10506@nkust.edu.tw"},
-        {"id": 139, "college": "管理學院", "dept": "UN12 資管系碩士班[第", "program": "日間部碩士", "type": "系專業課規", "staff": "周仕杰", "email": "red10506@nkust.edu.tw"},
-        {"id": 140, "college": "管理學院", "dept": "UN13 資管系碩專班[第", "program": "碩士在職專班", "type": "系專業課規", "staff": "周仕杰", "email": "red10506@nkust.edu.tw"},
-        {"id": 141, "college": "管理學院", "dept": "UN14 運籌系碩士班[第", "program": "日間部碩士", "type": "系專業課規", "staff": "周仕杰", "email": "red10506@nkust.edu.tw"},
-        {"id": 142, "college": "管理學院", "dept": "UN18 運籌系碩專班[第", "program": "碩士在職專班", "type": "系專業課規", "staff": "周仕杰", "email": "red10506@nkust.edu.tw"},
-        {"id": 143, "college": "管理學院", "dept": "UN22 國管學程", "program": "日間部碩士", "type": "系專業課規", "staff": "溫思怡", "email": "szuyiwen@nkust.edu.tw"},
-        {"id": 144, "college": "管理學院", "dept": "UN23 管院博班", "program": "日間部博士", "type": "系專業課規", "staff": "徐曉萱", "email": "hsu000@nkust.edu.tw"},
-        {"id": 145, "college": "管理學院", "dept": "UN27 科法所碩專班[第", "program": "碩士在職專班", "type": "系專業課規", "staff": "徐曉萱", "email": "hsu000@nkust.edu.tw"},
-        {"id": 146, "college": "管理學院", "dept": "UN37 運籌系商經管碩士", "program": "日間部碩士", "type": "系專業課規", "staff": "周仕杰", "email": "red10506@nkust.edu.tw"},
-        {"id": 147, "college": "管理學院", "dept": "UN37 運籌系商經管碩士", "program": "碩士在職專班", "type": "系專業課規", "staff": "周仕杰", "email": "red10506@nkust.edu.tw"},
-        {"id": 148, "college": "海洋商務學院", "dept": "UO01 航管系", "program": "進修部四技", "type": "系專業課規", "staff": "李宜臻", "email": "s996324@nkust.edu.tw"},
-        {"id": 149, "college": "海洋商務學院", "dept": "UO01 航管系", "program": "日間部四技", "type": "系專業課規", "staff": "王安娜", "email": "anwang@nkust.edu.tw"},
-        {"id": 150, "college": "海洋商務學院", "dept": "UO03 供管系", "program": "日間部四技", "type": "系專業課規", "staff": "王安娜", "email": "anwang@nkust.edu.tw"},
-        {"id": 151, "college": "海洋商務學院", "dept": "UO04 海休管理系", "program": "進修部四技", "type": "系專業課規", "staff": "李宜臻", "email": "s996324@nkust.edu.tw"},
-        {"id": 152, "college": "海洋商務學院", "dept": "UO04 海休管理系", "program": "日間部四技", "type": "系專業課規", "staff": "林宜臻", "email": "cleargo@nkust.edu.tw"},
-        {"id": 153, "college": "海洋商務學院", "dept": "UO07 航管所[楠梓|旗津", "program": "日間部碩士", "type": "系專業課規", "staff": "王安娜", "email": "anwang@nkust.edu.tw"},
-        {"id": 154, "college": "海洋商務學院", "dept": "UO07 航管所[楠梓|旗津", "program": "碩士在職專班", "type": "系專業課規", "staff": "李宜臻", "email": "s996324@nkust.edu.tw"},
-        {"id": 155, "college": "海洋商務學院", "dept": "UO08 航管系博士班[楠", "program": "日間部博士", "type": "系專業課規", "staff": "王安娜", "email": "anwang@nkust.edu.tw"},
-        {"id": 156, "college": "海洋商務學院", "dept": "UO13 休閒所[楠梓|旗津", "program": "日間部碩士", "type": "系專業課規", "staff": "林宜臻", "email": "cleargo@nkust.edu.tw"},
-        {"id": 157, "college": "海洋商務學院", "dept": "UO15 供應所[楠梓|旗津", "program": "日間部碩士", "type": "系專業課規", "staff": "王安娜", "email": "anwang@nkust.edu.tw"},
-        {"id": 158, "college": "海洋商務學院", "dept": "UO15 供應所[楠梓|旗津", "program": "碩士在職專班", "type": "系專業課規", "staff": "李宜臻", "email": "s996324@nkust.edu.tw"},
-        {"id": 159, "college": "管理學院", "dept": "UP01 金融系", "program": "進修部四技", "type": "系專業課規", "staff": "溫思怡", "email": "szuyiwen@nkust.edu.tw"},
-        {"id": 160, "college": "管理學院", "dept": "UP01 金融系", "program": "日間部四技", "type": "系專業課規", "staff": "溫思怡", "email": "szuyiwen@nkust.edu.tw"},
-        {"id": 161, "college": "管理學院", "dept": "UP02 風管系", "program": "日間部四技", "type": "系專業課規", "staff": "溫思怡", "email": "szuyiwen@nkust.edu.tw"},
-        {"id": 162, "college": "管理學院", "dept": "UP03 財管系", "program": "日間部四技", "type": "系專業課規", "staff": "林慈芳", "email": "tina@nkust.edu.tw"},
-        {"id": 163, "college": "商業智慧學院", "dept": "UP04 會資系", "program": "進修部二技", "type": "系專業課規", "staff": "鍾新珠", "email": "july@nkust.edu.tw"},
-        {"id": 164, "college": "商業智慧學院", "dept": "UP04 會資系", "program": "進修部四技", "type": "系專業課規", "staff": "蔡依芳", "email": "yvonnetsai@nkust.edu.tw"},
-        {"id": 165, "college": "商業智慧學院", "dept": "UP04 會資系", "program": "日間部四技", "type": "系專業課規", "staff": "鄭茹穗", "email": "snoopy5360@nkust.edu.tw"},
-        {"id": 166, "college": "管理學院", "dept": "UP07 金融系碩士專班[", "program": "碩士在職專班", "type": "系專業課規", "staff": "溫思怡", "email": "szuyiwen@nkust.edu.tw"},
-        {"id": 167, "college": "管理學院", "dept": "UP09 金融系碩士班[第", "program": "日間部碩士", "type": "系專業課規", "staff": "溫思怡", "email": "szuyiwen@nkust.edu.tw"},
-        {"id": 168, "college": "管理學院", "dept": "UP13 財管碩士[第一]", "program": "日間部碩士", "type": "系專業課規", "staff": "林慈芳", "email": "tina@nkust.edu.tw"},
-        {"id": 169, "college": "管理學院", "dept": "UP14 財管系碩專班[第", "program": "碩士在職專班", "type": "系專業課規", "staff": "林慈芳", "email": "tina@nkust.edu.tw"},
-        {"id": 170, "college": "商業智慧學院", "dept": "UP15 會資系碩士班", "program": "日間部碩士", "type": "系專業課規", "staff": "鄭茹穗", "email": "snoopy5360@nkust.edu.tw"},
-        {"id": 171, "college": "商業智慧學院", "dept": "UP18 會資系碩專班", "program": "碩士在職專班", "type": "系專業課規", "staff": "蔡依芳", "email": "yvonnetsai@nkust.edu.tw"},
-        {"id": 172, "college": "管理學院", "dept": "UP22 風管系碩士班", "program": "日間部碩士", "type": "系專業課規", "staff": "溫思怡", "email": "szuyiwen@nkust.edu.tw"},
-        {"id": 173, "college": "管理學院", "dept": "UP23 風管系碩專班", "program": "碩士在職專班", "type": "系專業課規", "staff": "溫思怡", "email": "szuyiwen@nkust.edu.tw"},
-        {"id": 174, "college": "管理學院", "dept": "UP30 國際智慧金融技優", "program": "日間部四技", "type": "系專業課規", "staff": "溫思怡", "email": "szuyiwen@nkust.edu.tw"},
-        {"id": 175, "college": "管理學院", "dept": "UP31 金融系金融高階主", "program": "碩士在職專班", "type": "系專業課規", "staff": "溫思怡", "email": "szuyiwen@nkust.edu.tw"},
-        {"id": 176, "college": "海事學院", "dept": "UQ01 造船及海洋工程系", "program": "日間部四技", "type": "系專業課規", "staff": "林宜臻", "email": "cleargo@nkust.edu.tw"},
-        {"id": 177, "college": "海事學院", "dept": "UQ03 電訊工程系", "program": "日間部四技", "type": "系專業課規", "staff": "王安娜", "email": "anwang@nkust.edu.tw"},
-        {"id": 178, "college": "海事學院", "dept": "UQ03 電訊工程系", "program": "進修部四技", "type": "系專業課規", "staff": "李宜臻", "email": "s996324@nkust.edu.tw"},
-        {"id": 179, "college": "水圈學院", "dept": "UQ04 海洋環境工程系", "program": "日間部四技", "type": "系專業課規", "staff": "王安娜", "email": "anwang@nkust.edu.tw"},
-        {"id": 180, "college": "海事學院", "dept": "UQ08 電訊所", "program": "日間部碩士", "type": "系專業課規", "staff": "王安娜", "email": "anwang@nkust.edu.tw"},
-        {"id": 181, "college": "海事學院", "dept": "UQ08 電訊所", "program": "碩士在職專班", "type": "系專業課規", "staff": "李宜臻", "email": "s996324@nkust.edu.tw"},
-        {"id": 182, "college": "水圈學院", "dept": "UQ11 海環所", "program": "日間部碩士", "type": "系專業課規", "staff": "王安娜", "email": "anwang@nkust.edu.tw"},
-        {"id": 183, "college": "海事學院", "dept": "UQ17 造船所", "program": "日間部碩士", "type": "系專業課規", "staff": "林宜臻", "email": "cleargo@nkust.edu.tw"},
-        {"id": 184, "college": "海事學院", "dept": "UQ17 造船所", "program": "碩士在職專班", "type": "系專業課規", "staff": "李宜臻", "email": "s996324@nkust.edu.tw"},
-        {"id": 185, "college": "UR01 航運技術系", "program": "日間部二技", "type": "系專業課規", "staff": "陳始麗", "email": "a6846@nkust.edu.tw"},
-        {"id": 186, "college": "海事學院", "dept": "UR01 航運技術系", "program": "日間部四技", "type": "系專業課規", "staff": "陳始麗", "email": "a6846@nkust.edu.tw"},
-        {"id": 187, "college": "海事學院", "dept": "UR01 航運技術系", "program": "進修部四技", "type": "系專業課規", "staff": "李宜臻", "email": "s996324@nkust.edu.tw"},
-        {"id": 188, "college": "海事學院", "dept": "UR02 輪機工程系", "program": "日間部二技", "type": "系專業課規", "staff": "李佳璋", "email": "uubobe@nkust.edu.tw"},
-        {"id": 189, "college": "海事學院", "dept": "UR02 輪機工程系", "program": "日間部四技", "type": "系專業課規", "staff": "李佳璋", "email": "uubobe@nkust.edu.tw"},
-        {"id": 190, "college": "海事學院", "dept": "UR02 輪機工程系", "program": "進修部四技", "type": "系專業課規", "staff": "李宜臻", "email": "s996324@nkust.edu.tw"},
-        {"id": 191, "college": "海事學院", "dept": "UR03 海事資訊科技系", "program": "日間部四技", "type": "系專業課規", "staff": "陳始麗", "email": "a6846@nkust.edu.tw"},
-        {"id": 192, "college": "海事學院", "dept": "UR04 航海科", "program": "日間部五專", "type": "系專業課規", "staff": "陳始麗", "email": "a6846@nkust.edu.tw"},
-        {"id": 193, "college": "海事學院", "dept": "UR06 航技所", "program": "日間部碩士", "type": "系專業課規", "staff": "陳始麗", "email": "a6846@nkust.edu.tw"},
-        {"id": 194, "college": "海事學院", "dept": "UR06 航技所", "program": "碩士在職專班", "type": "系專業課規", "staff": "李宜臻", "email": "s996324@nkust.edu.tw"},
-        {"id": 195, "college": "海事學院", "dept": "UR08 輪機科", "program": "日間部五專", "type": "系專業課規", "staff": "李佳璋", "email": "uubobe@nkust.edu.tw"},
-        {"id": 196, "college": "海事學院", "dept": "UR08 輪機科", "program": "日間部二專", "type": "系專業課規", "staff": "李佳璋", "email": "uubobe@nkust.edu.tw"},
-        {"id": 197, "college": "海事學院", "dept": "UR09 輪機所", "program": "日間部碩士", "type": "系專業課規", "staff": "李佳璋", "email": "uubobe@nkust.edu.tw"},
-        {"id": 198, "college": "海事學院", "dept": "UR09 輪機所", "program": "碩士在職專班", "type": "系專業課規", "staff": "李宜臻", "email": "s996324@nkust.edu.tw"},
-        {"id": 199, "college": "海事學院", "dept": "UR11 輪機產學攜手專班", "program": "進四技產學攜手專班", "type": "系專業課規", "staff": "李宜臻", "email": "s996324@nkust.edu.tw"},
-        {"id": 200, "college": "海事學院", "dept": "UR12 海資所", "program": "日間部碩士", "type": "系專業課規", "staff": "陳始麗", "email": "a6846@nkust.edu.tw"},
-        {"id": 201, "college": "海事學院", "dept": "UR12 海資所", "program": "碩士在職專班", "type": "系專業課規", "staff": "李宜臻", "email": "s996324@nkust.edu.tw"},
-        {"id": 202, "college": "海事學院", "dept": "UR13 海事風電工程碩士", "program": "日間部碩士", "type": "系專業課規", "staff": "李佳璋", "email": "uubobe@nkust.edu.tw"},
-        {"id": 203, "college": "海事學院", "dept": "UR14 海院海科產學博班", "program": "日間部博士", "type": "系專業課規", "staff": "王安娜", "email": "anwang@nkust.edu.tw"},
-        {"id": 204, "college": "海事學院", "dept": "UR15 智慧海事技優專班", "program": "日間部四技", "type": "系專業課規", "staff": "林宜臻", "email": "cleargo@nkust.edu.tw"},
-        {"id": 205, "college": "海事學院", "dept": "UR16 輪機學士後多元", "program": "日間部二技", "type": "系專業課規", "staff": "李佳璋", "email": "uubobe@nkust.edu.tw"},
-        {"id": 206, "college": "水圈學院", "dept": "US00 水圈學院", "program": "日間部四技", "type": "學院共同課規", "staff": "吳君苓", "email": "sunny614@nkust.edu.tw"},
-        {"id": 207, "college": "水圈學院", "dept": "US02 水產食品科學系", "program": "日間部四技", "type": "系專業課規", "staff": "林宜臻", "email": "cleargo@nkust.edu.tw"},
-        {"id": 208, "college": "水圈學院", "dept": "US02 水產食品科學系", "program": "日間部博士", "type": "系專業課規", "staff": "林宜臻", "email": "cleargo@nkust.edu.tw"},
-        {"id": 209, "college": "水圈學院", "dept": "US03 水產養殖系", "program": "日間部四技", "type": "系專業課規", "staff": "李宜臻", "email": "s996324@nkust.edu.tw"},
-        {"id": 210, "college": "水圈學院", "dept": "US04 海洋生物技術系", "program": "日間部四技", "type": "系專業課規", "staff": "王安娜", "email": "anwang@nkust.edu.tw"},
-        {"id": 211, "college": "水圈學院", "dept": "US08 水食所", "program": "日間部碩士", "type": "系專業課規", "staff": "林宜臻", "email": "cleargo@nkust.edu.tw"},
-        {"id": 212, "college": "水圈學院", "dept": "US08 水食所", "program": "碩士在職專班", "type": "系專業課規", "staff": "李宜臻", "email": "s996324@nkust.edu.tw"},
-        {"id": 213, "college": "水圈學院", "dept": "US08 水食所", "program": "日間部博士", "type": "系專業課規", "staff": "林宜臻", "email": "cleargo@nkust.edu.tw"},
-        {"id": 214, "college": "水圈學院", "dept": "US11 養殖所", "program": "日間部碩士", "type": "系專業課規", "staff": "李宜臻", "email": "s996324@nkust.edu.tw"},
-        {"id": 215, "college": "水圈學院", "dept": "US12 海生所", "program": "日間部碩士", "type": "系專業課規", "staff": "王安娜", "email": "anwang@nkust.edu.tw"},
-        {"id": 216, "college": "水圈學院", "dept": "US16 水產科技博班", "program": "日間部博士", "type": "系專業課規", "staff": "林宜臻", "email": "cleargo@nkust.edu.tw"},
-        {"id": 217, "college": "水圈學院", "dept": "US19 漁業科技與管理系", "program": "日間部碩士", "type": "系專業課規", "staff": "林宜臻", "email": "cleargo@nkust.edu.tw"},
-        {"id": 218, "college": "水圈學院", "dept": "US19 漁業科技與管理系", "program": "日間部四技", "type": "系專業課規", "staff": "林宜臻", "email": "cleargo@nkust.edu.tw"},
-        {"id": 219, "college": "水圈學院", "dept": "US19 漁業科技與管理系", "program": "碩士在職專班", "type": "系專業課規", "staff": "李宜臻", "email": "s996324@nkust.edu.tw"},
-        {"id": 220, "college": "水圈學院", "dept": "US20 漁業科技與管理科", "program": "日間部五專", "type": "系專業課規", "staff": "林宜臻", "email": "cleargo@nkust.edu.tw"},
-        {"id": 221, "college": "水圈學院", "dept": "US21 漁科海管碩士班", "program": "日間部碩士", "type": "系專業課規", "staff": "林宜臻", "email": "cleargo@nkust.edu.tw"},
-        {"id": 222, "college": "水圈學院", "dept": "US22 水圈學院外國學生", "program": "日間部博士", "type": "系專業課規", "staff": "林宜臻", "email": "cleargo@nkust.edu.tw"},
-        {"id": 223, "college": "商業智慧學院", "dept": "UT00 商業智慧學院", "program": "日間部四技", "type": "學院共同課規", "staff": "吳君苓", "email": "sunny614@nkust.edu.tw"},
-        {"id": 224, "college": "商業智慧學院", "dept": "UT00 商業智慧學院", "program": "日間部碩士", "type": "學院共同課規", "staff": "吳君苓", "email": "sunny614@nkust.edu.tw"},
-        {"id": 225, "college": "商業智慧學院", "dept": "UT01 智慧商務系", "program": "日間部碩士", "type": "系專業課規", "staff": "楊富閔", "email": "minshall@nkust.edu.tw"},
-        {"id": 226, "college": "商業智慧學院", "dept": "UT01 智慧商務系", "program": "碩士在職專班", "type": "系專業課規", "staff": "曾雪桃", "email": "sheue@nkust.edu.tw"},
-        {"id": 227, "college": "商業智慧學院", "dept": "UT01 智慧商務系", "program": "日間部四技", "type": "系專業課規", "staff": "楊富閔", "email": "minshall@nkust.edu.tw"},
-        {"id": 228, "college": "商業智慧學院", "dept": "UT02 商業智慧學院博班", "program": "日間部博士", "type": "系專業課規", "staff": "鄭茹穗", "email": "snoopy5360@nkust.edu.tw"},
-        {"id": 229, "college": "商業智慧學院", "dept": "UT03 財稅系", "program": "日間部碩士", "type": "系專業課規", "staff": "楊富閔", "email": "minshall@nkust.edu.tw"},
-        {"id": 230, "college": "商業智慧學院", "dept": "UT03 財稅系", "program": "進修部四技", "type": "系專業課規", "staff": "黃蕙蘭", "email": "hueylan@nkust.edu.tw"},
-        {"id": 231, "college": "商業智慧學院", "dept": "UT03 財稅系", "program": "日間部四技", "type": "系專業課規", "staff": "楊富閔", "email": "minshall@nkust.edu.tw"},
-        {"id": 232, "college": "商業智慧學院", "dept": "UT03 財稅系", "program": "碩士在職專班", "type": "系專業課規", "staff": "黃蕙蘭", "email": "hueylan@nkust.edu.tw"},
-        {"id": 233, "college": "工學院", "dept": "UU00 工學院", "program": "日間部四技", "type": "學院共同課規", "staff": "吳君苓", "email": "sunny614@nkust.edu.tw"},
-        {"id": 234, "college": "工學院", "dept": "UU00 工學院", "program": "日間部博士", "type": "學院共同課規", "staff": "吳君苓", "email": "sunny614@nkust.edu.tw"},
-        {"id": 235, "college": "海洋商務學院", "dept": "UV00 海商學院", "program": "日間部四技", "type": "學院共同課規", "staff": "吳君苓", "email": "sunny614@nkust.edu.tw"},
-        {"id": 236, "college": "海洋商務學院", "dept": "UV00 海商學院", "program": "日間部碩士", "type": "學院共同課規", "staff": "吳君苓", "email": "sunny614@nkust.edu.tw"},
-        {"id": 237, "college": "海洋商務學院", "dept": "UV01 商務資訊應用系", "program": "日間部四技", "type": "系專業課規", "staff": "林宜臻", "email": "cleargo@nkust.edu.tw"},
-        {"id": 238, "college": "海洋商務學院", "dept": "UV01 商務資訊應用系", "program": "日間部碩士", "type": "系專業課規", "staff": "林宜臻", "email": "cleargo@nkust.edu.tw"},
-        {"id": 239, "college": "管理學院", "dept": "UW00 管理學院", "program": "日間部四技", "type": "學院共同課規", "staff": "吳君苓", "email": "sunny614@nkust.edu.tw"},
-        {"id": 240, "college": "管理學院", "dept": "UW00 管理學院", "program": "進修部四技", "type": "學院共同課規", "staff": "吳君苓", "email": "sunny614@nkust.edu.tw"},
-        {"id": 241, "college": "教務處(學術單位)", "dept": "UX01 不分系學士學程", "program": "日間部四技", "type": "系專業課規", "staff": "王安娜", "email": "anwang@nkust.edu.tw"},
-        {"id": 242, "college": "智慧機電學院", "dept": "UY00 智慧機電學院", "program": "日間部四技", "type": "學院共同課規", "staff": "吳君苓", "email": "sunny614@nkust.edu.tw"},
-        {"id": 243, "college": "共同教育學院", "dept": "XB00 共同教育學院", "program": "日間部四技", "type": "校共同課規", "staff": "吳君苓", "email": "sunny614@nkust.edu.tw"},
-        {"id": 244, "college": "共同教育學院", "dept": "XB00 共同教育學院", "program": "日間部二技", "type": "校共同課規", "staff": "吳君苓", "email": "sunny614@nkust.edu.tw"},
-        {"id": 245, "college": "共同教育學院", "dept": "XB00 共同教育學院", "program": "進修部四技", "type": "校共同課規", "staff": "吳君苓", "email": "sunny614@nkust.edu.tw"},
-        {"id": 246, "college": "共同教育學院", "dept": "XB00 共同教育學院", "program": "進修部二技", "type": "校共同課規", "staff": "吳君苓", "email": "sunny614@nkust.edu.tw"},
-        {"id": 247, "college": "共同教育學院", "dept": "XB01 基礎教育中心", "program": "日間部四技", "type": "系專業課規", "staff": "吳君苓", "email": "sunny614@nkust.edu.tw"},
-        {"id": 248, "college": "共同教育學院", "dept": "XB01 基礎教育中心", "program": "日間部二技", "type": "系專業課規", "staff": "吳君苓", "email": "sunny614@nkust.edu.tw"},
-        {"id": 249, "college": "共同教育學院", "dept": "XB01 基礎教育中心", "program": "進修部四技", "type": "系專業課規", "staff": "吳君苓", "email": "sunny614@nkust.edu.tw"},
-        {"id": 250, "college": "共同教育學院", "dept": "XB01 基礎教育中心", "program": "進修部二技", "type": "系專業課規", "staff": "吳君苓", "email": "sunny614@nkust.edu.tw"},
-        {"id": 251, "college": "共同教育學院", "dept": "XB01 基礎教育中心", "program": "日間部五專", "type": "系專業課規", "staff": "吳君苓", "email": "sunny614@nkust.edu.tw"},
-        {"id": 252, "college": "共同教育學院", "dept": "XB02 博雅教育中心", "program": "進修部二技", "type": "系專業課規", "staff": "吳君苓", "email": "sunny614@nkust.edu.tw"},
-        {"id": 253, "college": "共同教育學院", "dept": "XB02 博雅教育中心", "program": "日間部四技", "type": "系專業課規", "staff": "吳君苓", "email": "sunny614@nkust.edu.tw"},
-        {"id": 254, "college": "共同教育學院", "dept": "XB02 博雅教育中心", "program": "進修部四技", "type": "系專業課規", "staff": "吳君苓", "email": "sunny614@nkust.edu.tw"},
-        {"id": 255, "college": "共同教育學院", "dept": "XB02 博雅教育中心", "program": "日間部二技", "type": "系專業課規", "staff": "吳君苓", "email": "sunny614@nkust.edu.tw"},
-        {"id": 256, "college": "共同教育學院", "dept": "XB02 博雅教育中心", "program": "日間部五專", "type": "系專業課規", "staff": "吳君苓", "email": "sunny614@nkust.edu.tw"},
-        {"id": 257, "college": "共同教育學院", "dept": "XB03 外語教育中心", "program": "日間部四技", "type": "系專業課規", "staff": "吳君苓", "email": "sunny614@nkust.edu.tw"},
-        {"id": 258, "college": "共同教育學院", "dept": "XB03 外語教育中心", "program": "日間部二技", "type": "系專業課規", "staff": "吳君苓", "email": "sunny614@nkust.edu.tw"},
-        {"id": 259, "college": "共同教育學院", "dept": "XB03 外語教育中心", "program": "進修部二技", "type": "系專業課規", "staff": "吳君苓", "email": "sunny614@nkust.edu.tw"},
-        {"id": 260, "college": "共同教育學院", "dept": "XB03 外語教育中心", "program": "進修部四技", "type": "系專業課規", "staff": "吳君苓", "email": "sunny614@nkust.edu.tw"},
-        {"id": 261, "college": "共同教育學院", "dept": "XB03 外語教育中心", "program": "日間部五專", "type": "系專業課規", "staff": "吳君苓", "email": "sunny614@nkust.edu.tw"}
-    ];
+    // 🌟 串接設定：請在此處填入您佈署完 GAS 網頁應用程式後獲得的 URL
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzzh92byUOSNmE3EjHySwVUXpMHv7qX7MDhOTVyfQPTphqfabz0tdP_o-ofDPu9fPo8OA/exec
+";
 
     let deptData = [];
     let selectedCollege = "全部";
     let selectedStaff = "全部";
+    let currentIdentity = "dept"; 
 
     function initSystem() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const stateData = urlParams.get('state');
-        if (stateData) {
-            try {
-                const parsedState = JSON.parse(decodeURIComponent(escape(atob(stateData))));
-                deptData = initialData.map(item => {
-                    const saved = parsedState.find(s => s.id === item.id);
-                    return saved ? {
-                        ...item,
-                        s1: saved.s1 || false,
-                        s2: saved.s2 || false,
-                        s3: saved.s3 || false,
-                        s4: saved.s4 || false,
-                        c1: saved.c1 || false,
-                        c2: saved.c2 || false,
-                        step3: saved.p3 || false
-                    } : {
-                        ...item, s1: false, s2: false, s3: false, s4: false, c1: false, c2: false, step3: false
-                    };
-                });
-            } catch (e) {
-                console.error("還原失敗，啟用全新表格", e);
-                resetAllProgress();
-            }
-        } else {
-            resetAllProgress();
+        if(GAS_API_URL.includes("請在此處貼上")) {
+            alert("錯誤：請先設定您的 GAS_API_URL 雲端網址！");
+            return;
         }
+        fetch(GAS_API_URL)
+            .then(res => res.json())
+            .then(data => {
+                deptData = data;
+                document.getElementById("loading-text").style.display = "none";
+                document.getElementById("main-table").style.display = "table";
+                renderTable();
+            })
+            .catch(err => {
+                console.error(err);
+                document.getElementById("loading-text").innerText = "❌ 雲端資料庫連線失敗，請檢查設定。";
+            });
     }
 
-    function resetAllProgress() {
-        deptData = initialData.map(item => ({
-            ...item,
-            s1: false, s2: false, s3: false, s4: false, 
-            c1: false, c2: false,                       
-            step3: false                                
-        }));
+    function changeIdentity() {
+        currentIdentity = document.getElementById("identity-select").value;
+        renderTable();
     }
 
     function renderTable() {
@@ -726,12 +205,8 @@
         tbody.innerHTML = "";
 
         let filtered = deptData;
-        if (selectedCollege !== "全部") {
-            filtered = filtered.filter(d => d.college === selectedCollege);
-        }
-        if (selectedStaff !== "全部") {
-            filtered = filtered.filter(d => d.staff === selectedStaff);
-        }
+        if (selectedCollege !== "全部") filtered = filtered.filter(d => d.college === selectedCollege);
+        if (selectedStaff !== "全部") filtered = filtered.filter(d => d.staff === selectedStaff);
         const keyword = document.getElementById("search-box").value.trim().toLowerCase();
         if (keyword) {
             filtered = filtered.filter(d => d.dept.toLowerCase().includes(keyword) || d.program.toLowerCase().includes(keyword));
@@ -740,36 +215,28 @@
         filtered.forEach(item => {
             const tr = document.createElement("tr");
 
-            // 🌟 修正重點 1：改為判斷是否「同時滿足日間部四技且為系專業課規」
             const isFourYearDayAndDeptProd = (item.program === "日間部四技" && item.type === "系專業課規");
             
-            // 根據上述新條件判定階段一是否完備 (需要過 4 關或 3 關)
             const isStage1Complete = isFourYearDayAndDeptProd 
                 ? (item.s1 && item.s2 && item.s3 && item.s4)
                 : (item.s1 && item.s2 && item.s3);
 
-            // 判斷階段二是否完全通過
             const isStage2Complete = isStage1Complete && item.c1 && item.c2;
 
-            // 判斷總流程狀態
-            let statusClass = "status-0";
-            let statusText = "⏳ 未提報";
-            if (isStage1Complete && !isStage2Complete) {
-                statusClass = "status-1";
-                statusText = "📩 綜業處審理中";
-            } else if (isStage2Complete && !item.step3) {
-                statusClass = "status-1";
-                statusText = "📩 綜業處送交中";
-            } else if (item.step3) {
-                statusClass = "status-2";
-                statusText = "✅ 教務處已簽收";
-            }
+            let statusClass = "status-0"; let statusText = "⏳ 未提報";
+            if (isStage1Complete && !isStage2Complete) { statusClass = "status-1"; statusText = "📩 綜業處審理中"; }
+            else if (isStage2Complete && !item.step3) { statusClass = "status-1"; statusText = "📩 綜業處送交中"; }
+            else if (item.step3) { statusClass = "status-2"; statusText = "✅ 教務處已簽收"; }
 
-            // 🌟 修正重點 2：動態生成階段一的 HTML (只有雙重符合者才給 4 個勾選框)
+            const isDeptDisabled = (currentIdentity !== 'dept' && currentIdentity !== 'academic');
+            const isStaffDisabled = (currentIdentity !== 'staff' && currentIdentity !== 'academic') || !isStage1Complete;
+            const isAcademicDisabled = (currentIdentity !== 'academic') || !isStage2Complete;
+
+            // 階段一 HTML
             let stage1HTML = "";
             if (isFourYearDayAndDeptProd) {
                 stage1HTML = `
-                    <div class="stage-box">
+                    <div class="stage-box ${isDeptDisabled ? 'disabled-layer' : ''}">
                         <div class="stage-title">
                             <span>【階段一】檢核清單</span>
                             ${isStage1Complete ? '<span style="color:#10b981;font-weight:bold;">✓ 完備</span>' : '<span style="color:#f59e0b;font-weight:bold;">未完備</span>'}
@@ -794,7 +261,7 @@
                 `;
             } else {
                 stage1HTML = `
-                    <div class="stage-box">
+                    <div class="stage-box ${isDeptDisabled ? 'disabled-layer' : ''}">
                         <div class="stage-title">
                             <span>【階段一】檢核清單</span>
                             ${isStage1Complete ? '<span style="color:#10b981;font-weight:bold;">✓ 完備</span>' : '<span style="color:#f59e0b;font-weight:bold;">未完備</span>'}
@@ -815,31 +282,47 @@
                 `;
             }
 
-            const stage2HTML = `
-                <div class="stage-box ${!isStage1Complete ? 'disabled-layer' : ''}">
+            if(isStage1Complete) {
+                stage1HTML += `<button class="action-btn btn-submit" onclick="cloudSave(${item.id}, 'submitStage1')">🚀 線上確認完備，發信通知下一關</button>`;
+            } else {
+                if(currentIdentity === 'dept' || currentIdentity === 'academic') {
+                    stage1HTML += `<span class="auto-save-tag">⚡ 勾選後將全自動存檔</span>`;
+                }
+            }
+
+            // 階段二 HTML
+            let stage2HTML = `
+                <div class="stage-box ${isStaffDisabled ? 'disabled-layer' : ''}">
                     <div class="stage-title">
                         <span>【階段二】綜業處檢核</span>
                         ${isStage2Complete ? '<span style="color:#10b981;font-weight:bold;">✓ 簽收轉送</span>' : '<span style="color:#64748b;font-weight:bold;">待核對</span>'}
                     </div>
                     <label class="check-item-row ${item.c1 ? 'checked-text' : ''}">
-                        <input type="checkbox" ${!isStage1Complete ? 'disabled' : ''} ${item.c1 ? 'checked' : ''} onchange="toggleSubCheck(${item.id}, 'c1', this.checked)">
+                        <input type="checkbox" ${item.c1 ? 'checked' : ''} onchange="toggleSubCheck(${item.id}, 'c1', this.checked)">
                         <span>1. 實體紙本課規表校對無誤</span>
                     </label>
                     <label class="check-item-row ${item.c2 ? 'checked-text' : ''}">
-                        <input type="checkbox" ${!isStage1Complete ? 'disabled' : ''} ${item.c2 ? 'checked' : ''} onchange="toggleSubCheck(${item.id}, 'c2', this.checked)">
+                        <input type="checkbox" ${item.c2 ? 'checked' : ''} onchange="toggleSubCheck(${item.id}, 'c2', this.checked)">
                         <span>2. 轉送其中 1 份至教務處課務組備查</span>
                     </label>
                 </div>
             `;
+            if(currentIdentity === 'staff' || currentIdentity === 'academic') {
+                stage2HTML += `<span class="auto-save-tag">⚡ 勾選後將全自動存檔</span>`;
+            }
 
-            const stage3HTML = `
-                <div style="padding-top:10px;" class="${!isStage2Complete ? 'disabled-layer' : ''}">
+            // 階段三 HTML
+            let stage3HTML = `
+                <div style="padding-top:10px;" class="${isAcademicDisabled ? 'disabled-layer' : ''}">
                     <label class="checkbox-label" style="font-size:12.5px;">
-                        <input type="checkbox" ${!isStage2Complete ? 'disabled' : ''} ${item.step3 ? 'checked' : ''} onchange="toggleSubCheck(${item.id}, 'step3', this.checked)">
+                        <input type="checkbox" ${item.step3 ? 'checked' : ''} onchange="toggleSubCheck(${item.id}, 'step3', this.checked)">
                         <span><b>【階段三】簽收備查</b></span>
                     </label>
                 </div>
             `;
+            if(currentIdentity === 'academic') {
+                stage3HTML += `<span class="auto-save-tag">⚡ 勾選後將全自動存檔</span>`;
+            }
 
             tr.innerHTML = `
                 <td><b>${item.college}</b></td>
@@ -847,10 +330,7 @@
                     <span class="tag-badge">${item.type}</span><br>
                     <b style="font-size:14px;color:#1e3a8a;">${item.dept}</b><br>
                     <small style="color:#475569;font-weight:bold;">${item.program}</small>
-                    <div class="staff-info">
-                        👤 綜業處窗口：<b>${item.staff}</b><br>
-                        ✉️ ${item.email}
-                    </div>
+                    <div class="staff-info">👤 綜業處窗口：<b>${item.staff}</b></div>
                 </td>
                 <td>${stage1HTML}</td>
                 <td>${stage2HTML}</td>
@@ -867,41 +347,96 @@
         if (target) {
             target[field] = val;
             
-            // 🌟 修正重點 3：防呆連鎖取消邏輯中，同步修正雙重條件判定
             const isFourYearDayAndDeptProd = (target.program === "日間部四技" && target.type === "系專業課規");
-            const isStage1Complete = isFourYearDayAndDeptProd 
-                ? (target.s1 && target.s2 && target.s3 && target.s4)
-                : (target.s1 && target.s2 && target.s3);
+            const isStage1Complete = isFourYearDayAndDeptProd ? (target.s1 && target.s2 && target.s3 && target.s4) : (target.s1 && target.s2 && target.s3);
 
-            if (!isStage1Complete) {
-                target.c1 = false;
-                target.c2 = false;
-                target.step3 = false;
-            }
-
+            if (!isStage1Complete) { target.c1 = false; target.c2 = false; target.step3 = false; }
             const isStage2Complete = isStage1Complete && target.c1 && target.c2;
-            if (!isStage2Complete) {
-                target.step3 = false;
-            }
+            if (!isStage2Complete) { target.step3 = false; }
 
             renderTable();
+            autoCloudSave(target, 'save');
         }
+    }
+
+    function autoCloudSave(targetData, actionType) {
+        const toast = document.getElementById("toast-msg");
+        toast.style.display = "block";
+        toast.style.background = "#2563eb";
+        toast.innerText = "🔄 雲端即時同步中...";
+
+        fetch(GAS_API_URL, {
+            method: "POST",
+            body: JSON.stringify({
+                action: actionType,
+                data: targetData
+            })
+        })
+        .then(res => res.json())
+        .then(res => {
+            if (res.status === "success") {
+                toast.style.background = "#10b981";
+                toast.innerText = "✅ 雲端自動存檔完成";
+                setTimeout(() => { toast.style.display = "none"; }, 1500);
+            } else {
+                toast.style.background = "#ef4444";
+                toast.innerText = "❌ 自動存檔失敗";
+            }
+        })
+        .catch(err => {
+            toast.style.background = "#ef4444";
+            toast.innerText = "❌ 網路連線異常";
+        });
+    }
+
+    function cloudSave(id, actionType) {
+        const target = deptData.find(d => d.id === id);
+        if (!target) return;
+
+        if (actionType === 'submitStage1') {
+            if (!confirm(`確定要提交並全自動發信通知綜業處窗口【${target.staff}】同仁嗎？`)) {
+                return;
+            }
+        }
+
+        document.getElementById("loading-text").innerText = "🚀 正在發送自動通知信並與雲端進行最終同步...";
+        document.getElementById("loading-text").style.display = "block";
+        document.getElementById("main-table").style.display = "none";
+
+        fetch(GAS_API_URL, {
+            method: "POST",
+            body: JSON.stringify({
+                action: actionType,
+                data: target
+            })
+        })
+        .then(res => res.json())
+        .then(res => {
+            if (res.status === "success") {
+                alert("🚀 提交成功！已發送 Email 通知下一關窗口。");
+                initSystem(); 
+            } else {
+                alert("❌ 失敗：" + res.message);
+                initSystem();
+            }
+        })
+        .catch(err => {
+            alert("❌ 連線異常，請檢查網路。");
+            initSystem();
+        });
     }
 
     function updateDashboard() {
         const total = deptData.length;
         const s2 = deptData.filter(d => {
-            // 🌟 修正重點 4：儀表板進度計算公式同步調整
             const isFourYearDayAndDeptProd = (d.program === "日間部四技" && d.type === "系專業課規");
             const completedS1 = isFourYearDayAndDeptProd ? (d.s1 && d.s2 && d.s3 && d.s4) : (d.s1 && d.s2 && d.s3);
-            const completedS2 = completedS1 && d.c1 && d.c2;
-            return completedS2 && d.step3;
+            return completedS1 && d.c1 && d.c2 && d.step3;
         }).length;
 
         const s1 = deptData.filter(d => {
             const isFourYearDayAndDeptProd = (d.program === "日間部四技" && d.type === "系專業課規");
-            const completedS1 = isFourYearDayAndDeptProd ? (d.s1 && d.s2 && d.s3 && d.s4) : (d.s1 && d.s2 && d.s3);
-            return completedS1 && !d.step3;
+            return (isFourYearDayAndDeptProd ? (d.s1 && d.s2 && d.s3 && d.s4) : (d.s1 && d.s2 && d.s3)) && !d.step3;
         }).length;
 
         const s0 = total - s1 - s2;
@@ -933,21 +468,7 @@
 
     function searchDept() { renderTable(); }
 
-    function generateSharedLink() {
-        const stateSummary = deptData.map(d => ({
-            id: d.id, 
-            s1: d.s1, s2: d.s2, s3: d.s3, s4: d.s4,
-            c1: d.c1, c2: d.c2,
-            p3: d.step3
-        }));
-        const encodedState = btoa(unescape(encodeURIComponent(JSON.stringify(stateSummary))));
-        const baseUrl = window.location.href.split('?')[0];
-        const realMasterUrl = baseUrl + "?state=" + encodedState;
-        prompt("💾 進度已儲存！請複製下方網址，並將其替換掉原本的瀏覽器書籤（或加到我的最愛）：", realMasterUrl);
-    }
-
     initSystem();
-    renderTable();
 </script>
 </body>
 </html>
